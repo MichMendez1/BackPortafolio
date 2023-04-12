@@ -14,6 +14,7 @@ app.use(bodyParser.json({limit:'50mb'}))
 app.use(cors())
 
 //Rutas 
+//f
 
 app.post('/', (req,res)=>{
     let data =req.body
