@@ -33,5 +33,5 @@ app.post('/', (req,res)=>{
 
 
 app.listen(app.get('port'), ()=>{
-    console.log(`Aplicacion funcionando en puerto ${app.get('port')}`);
+    console.log(`Aplicacion funcionando en puerto: ${app.get('port')}`);
 })
