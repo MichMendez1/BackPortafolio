@@ -3,9 +3,12 @@ import dotenv from 'dotenv';
 import conectarDB from './config/db.js';
 import estudianteRoutes from './routes/estudianteRoutes.js';
 import Estudiante from "./models/Estudiante.js";
+import cors from 'cors';
+
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 //escanea y busca el archivo .env
 dotenv.config();
