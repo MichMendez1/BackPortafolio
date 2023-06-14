@@ -37,7 +37,6 @@ const profesorSchema = mongoose.Schema({
     token:{
         type: String,
         default: generarId(),
-
     },
 
     confirmado:{
@@ -47,7 +46,6 @@ const profesorSchema = mongoose.Schema({
 
     curso:{
         type:String,
-
     },
 });
 
