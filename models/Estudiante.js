@@ -4,21 +4,41 @@ import generarId from "../helpers/generarId.js";
 
 
 const estudianteSchema = mongoose.Schema({
-    nombre: {
+    cursoID: {
+        type: String,
+        required: false,
+        trim: true,
+    },
+    nombres: {
+        type: String,
+        required: true,
+    },
+    apellido_paterno: {
         type: String,
         required: true,
         trim: true,
     },
-
-    rut: {
+    apellido_materno: {
         type: String,
-        required: true,
+        required: false,
         trim: true,
     },
-
-    password: {
-        type: String,
+    fecha_nacimiento: {
+        type: Date,
         required: true,
+        
+    },
+    nacionalidad: {
+        type: String,
+        required: false,
+        trim: true,
+        
+    },
+    direccion: {
+        type: String,
+        required: false,
+        trim: false,
+        
     },
     email: {
         type: String,
@@ -27,14 +47,30 @@ const estudianteSchema = mongoose.Schema({
         trim: true,
     },
 
+    password: {
+        type: String,
+        required: true,
+    },
+    genero: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    rut: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+
     telfono: {
         type: String,
         default: null,
         trim: true,
     },
-    emailPropio: {
+    tipo: {
         type: String,
-        default: null,
+        required: true,
         trim: true,
     },
     token:{
@@ -42,11 +78,6 @@ const estudianteSchema = mongoose.Schema({
         default: generarId(),
 
     },
-
-    confirmado:{
-        type: Boolean,
-        default: false
-    }
 });
 
 //Hashear clave
