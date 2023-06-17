@@ -96,5 +96,15 @@ const comprobarToken=(req, res)=>{
 const nuevoPassword=(req, res)=>{
 
 } ;
+const obtenerUsuarios = async (req, res) => {
+    try {
+      const usuarios = await Estudiante.find(); // Obtiene todos los usuarios de la base de datos
+      res.json(usuarios); // Envía la lista de usuarios como respuesta
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+  };
+  
 
-export {registrar, perfil, confirmar , autenticar, olvidePassword, comprobarToken, nuevoPassword};
+export {registrar, perfil, confirmar , autenticar, olvidePassword, comprobarToken, nuevoPassword, obtenerUsuarios};

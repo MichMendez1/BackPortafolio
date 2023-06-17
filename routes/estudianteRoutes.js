@@ -7,7 +7,8 @@ import {
     autenticar,
     olvidePassword,
     comprobarToken,
-    nuevoPassword
+    nuevoPassword,
+    obtenerUsuarios
 } from '../controllers/estudianteController.js';
 import cheackAuth from "../middleware/authMiddleware.js";
 
@@ -21,5 +22,7 @@ router.route("/olvide-password/:token").get(comprobarToken).post(nuevoPassword);
 
 
 router.get("/perfil", cheackAuth, perfil);
+router.get('/usuarios', obtenerUsuarios);
+
 
 export default router;
