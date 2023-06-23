@@ -63,7 +63,7 @@ const estudianteSchema = mongoose.Schema({
         trim: true,
     },
 
-    telfono: {
+    telefono: {
         type: String,
         default: null,
         trim: true,
@@ -76,6 +76,11 @@ const estudianteSchema = mongoose.Schema({
     token:{
         type: String,
         default: generarId(),
+
+    },
+    confirmado:{
+        type: Boolean,
+        default: false,
 
     },
 });

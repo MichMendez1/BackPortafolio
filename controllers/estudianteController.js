@@ -30,47 +30,49 @@ const perfil = (req, res)=>{
     res.json({ perfil : estudiante });
 };
 
-const confirmar = async (req,res)=>{
-    const { token } = req.params;
-
-    //Buscar usuario con ese token 
-    const usuarioConfirmar = await Estudiante.findOne({token})
-    
-    if (!usuarioConfirmar){
-        const error = new Error('Token no válido');
-        return res.status(404).json({msg: error.message});
-    }
-
-    try {
-        // Despues de buscar se modifica confirmado = true  y almacena 
-        usuarioConfirmar.token = null;
-        usuarioConfirmar.confirmado = true;
-        await usuarioConfirmar.save()
-        res.json({msg: "Usuario confirmado correctamente."})
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
-
-};
+// const confirmar = async (req, res) => {
+//     const { token } = req.params;
+  
+//     try {
+//       // Buscar usuario con ese token
+//       const usuarioConfirmar = await Estudiante.findOne({ token });
+  
+//       if (!usuarioConfirmar) {
+//         const error = new Error('Token no válido');
+//         return res.status(404).json({ msg: error.message });
+//       }
+  
+//       // Actualizar confirmado = true y guardar cambios
+//       usuarioConfirmar.confirmado = true;
+//       usuarioConfirmar.token = null;
+//       await usuarioConfirmar.save();
+  
+//       res.json({ msg: 'Usuario confirmado correctamente.' });
+//     } catch (error) {
+//       console.log(error);
+//       res.status(500).json({ msg: 'Error al confirmar el usuario.' });
+//     }
+//   };
+  
 
 const autenticar = async  (req, res)=>{
     const{ email, password } = req.body
 
     //Comprobar si el usuario existe 
     const usuario = await Estudiante.findOne({email});
+    console.log(usuario);
+    return res.status(200).json(usuario)
 
     if (!usuario){
         const error = new Error('El Usuario no existe');
         return res.status(404).json({msg: error.message});
     }
 
-    //Comprobar si el usario esta confirmado 
-    if (!usuario.confirmado){
-        const error = new Error('Tú cuenta no ha sido confirmada');
-        return res.status(403).json({msg: error.message});
-    }
+    // //Comprobar si el usario esta confirmado 
+    // if (!usuario.confirmado){
+    //     const error = new Error('Tú cuenta no ha sido confirmada');
+    //     return res.status(403).json({msg: error.message});
+    // }
 
     //Revisar el password 
     if(await usuario.comprobarPassword(password)){
@@ -78,6 +80,14 @@ const autenticar = async  (req, res)=>{
     
     //Autenticar
         res.json({ token: generarJWT(usuario.id) });
+        const usuarioGuardado = {
+          _id: usuario.id,
+          nombres: usuario.nombres,
+          apellidoPaterno: usuario.apellidoPaterno,
+          apellidoMaterno: usuario.apellidoMaterno,
+          email: usuario.email,
+        };
+        
     }else {
         const error = new Error('Password es incorrecto');
         return res.status(403).json({msg: error.message});
@@ -105,6 +115,32 @@ const obtenerUsuarios = async (req, res) => {
       res.status(500).json({ error: 'Error al obtener los usuarios' });
     }
   };
+  const eliminarEstudiante = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const estudiante = await Estudiante.findByIdAndDelete(id);
+  
+      if (!estudiante) {
+        return res.status(404).json({ mensaje: 'Estudiante no encontrado' });
+      }
+  
+      res.json({ mensaje: 'Estudiante eliminado correctamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ mensaje: 'Error al eliminar el estudiante' });
+    }
+  };
+  const actualizarEstudiante = async (req, res) => {
+    const estudianteId = req.params.id;
+    try {
+      const estudiante = await Estudiante.findByIdAndUpdate(estudianteId, req.body, { new: true });
+      res.json(estudiante);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ msg: 'Error al actualizar el estudiante' });
+    }
+  };
   
 
-export {registrar, perfil, confirmar , autenticar, olvidePassword, comprobarToken, nuevoPassword, obtenerUsuarios};
+export {registrar, perfil, autenticar, olvidePassword, comprobarToken, nuevoPassword, obtenerUsuarios,eliminarEstudiante, actualizarEstudiante};
