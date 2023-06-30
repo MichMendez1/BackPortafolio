@@ -21,7 +21,7 @@ const alumnoSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    telofono:{
+    telefono:{
         type: Number,
         require: true
     },

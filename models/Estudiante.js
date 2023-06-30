@@ -4,6 +4,11 @@ import generarId from "../helpers/generarId.js";
 
 
 const estudianteSchema = mongoose.Schema({
+    alumnoID: {
+        type: String,
+        required: false,
+        trim: true,
+    },
     cursoID: {
         type: String,
         required: false,

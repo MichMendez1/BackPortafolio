@@ -11,7 +11,7 @@ const existeUsuario = await  Estudiante.findOne({email})
 
 if (existeUsuario){
     const error = new Error('Usuario ya registrado');
-    return res.status(400).json({msg: error.message});
+    return res.status(400).json({ errors: [{ msg: error.message }] });
 }
 try {
     //Guardar nuevo Estudiante
@@ -61,7 +61,7 @@ const autenticar = async  (req, res)=>{
     //Comprobar si el usuario existe 
     const usuario = await Estudiante.findOne({email});
     console.log(usuario);
-    return res.status(200).json(usuario)
+
 
     if (!usuario){
         const error = new Error('El Usuario no existe');
@@ -76,7 +76,8 @@ const autenticar = async  (req, res)=>{
 
     //Revisar el password 
     if(await usuario.comprobarPassword(password)){
-        console.log('Password correcto');
+        console.log('Contraseña correcta');
+        return res.status(200).json(usuario)
     
     //Autenticar
         res.json({ token: generarJWT(usuario.id) });
@@ -88,10 +89,12 @@ const autenticar = async  (req, res)=>{
           email: usuario.email,
         };
         
-    }else {
-        const error = new Error('Password es incorrecto');
+    }
+    else {
+        const error = new Error('Contraseña es incorrecta');
         return res.status(403).json({msg: error.message});
     }
+    
    
 };
 
