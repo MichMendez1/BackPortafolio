@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 
 const colegioSchema = mongoose.Schema({
-    nombre:{
+    id_colegio:{
         type: String,
         require: true
     },
     id_sostenedor:{
+        type: String,
+        require: true
+    },
+    nombre:{
         type: String,
         require: true
     },

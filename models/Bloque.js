@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const bloqueSchema = mongoose.Schema({
+    id_bloque:{
+        type: String,
+        require: true
+    },
     nombre:{
         type: String,
         require: true

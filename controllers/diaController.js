@@ -1,24 +1,23 @@
-import Profesor from "../models/Profesor.js";
+import Dia from "../models/Dia.js";
 import generarJWT from "../helpers/generarJWT.js"
-
 
 const registrar =  async (req, res)=>{
 
 console.log(req.body);
-const {email} = req.body;
+const {id_dia} = req.body;
 
 //Prevenir usuarios duplicados
-const existeUsuario = await  Profesor.findOne({email})
+const existeUsuario = await  Dia.findOne({id_dia})
 
 if (existeUsuario){
     const error = new Error('Usuario ya registrado');
-    return res.status(400).json({msg: error.message});
+    return res.status(400).json({ errors: [{ msg: error.message }] });
 }
 try {
-    //Guardar nuevo Profesor
-    const profesor = new Profesor(req.body);
-    const profesorGuardado = await profesor.save(); 
-    res.json(profesorGuardado);
+    //Guardar nuevo Dia
+    const dia = new Dia(req.body);
+    const diaGuardado = await dia.save(); 
+    res.json(diaGuardado);
 
 } catch (error) {
     console.log(error);    
@@ -27,8 +26,8 @@ try {
 };
 
 const perfil = (req, res)=>{
-    const { profesor } = req;
-    res.json({ perfil : profesor });
+    const { dia } = req;
+    res.json({ perfil : dia });
 };
 
 // const confirmar = async (req, res) => {
@@ -36,7 +35,7 @@ const perfil = (req, res)=>{
   
 //     try {
 //       // Buscar usuario con ese token
-//       const usuarioConfirmar = await Profesor.findOne({ token });
+//       const usuarioConfirmar = await Dia.findOne({ token });
   
 //       if (!usuarioConfirmar) {
 //         const error = new Error('Token no válido');
@@ -60,7 +59,7 @@ const autenticar = async  (req, res)=>{
     const{ email, password } = req.body
 
     //Comprobar si el usuario existe 
-    const usuario = await Profesor.findOne({email});
+    const usuario = await Dia.findOne({email});
     console.log(usuario);
 
 
@@ -78,6 +77,7 @@ const autenticar = async  (req, res)=>{
     //Revisar el password 
     if(await usuario.comprobarPassword(password)){
         console.log('Contraseña correcta');
+        return res.status(200).json(usuario)
     
     //Autenticar
         res.json({ token: generarJWT(usuario.id) });
@@ -88,60 +88,58 @@ const autenticar = async  (req, res)=>{
           apellidoMaterno: usuario.apellidoMaterno,
           email: usuario.email,
         };
-        return res.status(200).json(usuario)
-    }else {
+        
+    }
+    else {
         const error = new Error('Contraseña es incorrecta');
         return res.status(403).json({msg: error.message});
     }
+    
    
 };
 
-const olvidePassword=(req, res)=>{
 
-} ;
 
 const comprobarToken=(req, res)=>{
 
 } ;
 
-const nuevoPassword=(req, res)=>{
 
-} ;
 const obtenerUsuarios = async (req, res) => {
     try {
-      const usuarios = await Profesor.find(); // Obtiene todos los usuarios de la base de datos
+      const usuarios = await Dia.find(); // Obtiene todos los usuarios de la base de datos
       res.json(usuarios); // Envía la lista de usuarios como respuesta
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: 'Error al obtener los usuarios' });
     }
   };
-  const eliminarProfesor = async (req, res) => {
+  const eliminarDia = async (req, res) => {
     const { id } = req.params;
   
     try {
-      const profesor = await Profesor.findByIdAndDelete(id);
+      const dia = await Dia.findByIdAndDelete(id);
   
-      if (!profesor) {
-        return res.status(404).json({ mensaje: 'Profesor no encontrado' });
+      if (!dia) {
+        return res.status(404).json({ mensaje: 'Dia no encontrado' });
       }
   
-      res.json({ mensaje: 'Profesor eliminado correctamente' });
+      res.json({ mensaje: 'Dia eliminado correctamente' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ mensaje: 'Error al eliminar el Profesor' });
+      res.status(500).json({ mensaje: 'Error al eliminar el dia' });
     }
   };
-  const actualizarProfesor = async (req, res) => {
-    const profesorId = req.params.id;
+  const actualizarDia = async (req, res) => {
+    const diaId = req.params.id;
     try {
-      const profesor = await Profesor.findByIdAndUpdate(profesorId, req.body, { new: true });
-      res.json(profesor);
+      const dia = await Dia.findByIdAndUpdate(diaId, req.body, { new: true });
+      res.json(dia);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ msg: 'Error al actualizar el profesor' });
+      res.status(500).json({ msg: 'Error al actualizar el dia' });
     }
   };
   
 
-export {registrar, perfil, autenticar, olvidePassword, comprobarToken, nuevoPassword, obtenerUsuarios,eliminarProfesor, actualizarProfesor};
+export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarDia, actualizarDia};

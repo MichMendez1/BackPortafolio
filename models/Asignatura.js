@@ -1,11 +1,19 @@
 import mongoose from "mongoose";
 
 const asignaturaSchema = mongoose.Schema({
-    asignatura:{
+    id_asignatura:{
+        type: String,
+        require: true
+    },
+    nombre:{
+        type: String,
+        require: true
+    },
+    id_Profesor:{
         type: String,
         require: true
     }
 })
 
-const asignatura = mongoose.model('asignatura', asignaturaSchema)
-export default asignatura
+const Asignatura = mongoose.model('Asignatura', asignaturaSchema)
+export default Asignatura;
