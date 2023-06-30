@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const mensualidadSchema = mongoose.Schema({
+    id_mensualidad:{
+        type: String,
+        require: true
+    },
     id_alumno:{
         type: String,
         require: true

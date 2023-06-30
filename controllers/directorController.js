@@ -1,4 +1,4 @@
-import Profesor from "../models/Profesor.js";
+import Estudiante from "../models/Estudiante.js";
 import generarJWT from "../helpers/generarJWT.js"
 
 const registrar =  async (req, res)=>{
@@ -7,17 +7,17 @@ console.log(req.body);
 const {email} = req.body;
 
 //Prevenir usuarios duplicados
-const existeUsuario = await  Profesor.findOne({email})
+const existeUsuario = await  Estudiante.findOne({email})
 
 if (existeUsuario){
     const error = new Error('Usuario ya registrado');
     return res.status(400).json({msg: error.message});
 }
 try {
-    //Guardar nuevo Profesor
-    const Profesor = new Profesor(req.body);
-    const ProfesorGuardado = await Profesor.save(); 
-    res.json(ProfesorGuardado);
+    //Guardar nuevo Estudiante
+    const estudiante = new Estudiante(req.body);
+    const estudianteGuardado = await estudiante.save(); 
+    res.json(estudianteGuardado);
 
 } catch (error) {
     console.log(error);    
@@ -26,15 +26,15 @@ try {
 };
 
 const perfil = (req, res)=>{
-    const { Profesor } = req;
-    res.json({ perfil : Profesor });
+    const { estudiante } = req;
+    res.json({ perfil : estudiante });
 };
 
 const confirmar = async (req,res)=>{
     const { token } = req.params;
 
     //Buscar usuario con ese token 
-    const usuarioConfirmar = await Profesor.findOne({token})
+    const usuarioConfirmar = await Estudiante.findOne({token})
     
     if (!usuarioConfirmar){
         const error = new Error('Token no válido');
@@ -59,7 +59,7 @@ const autenticar = async  (req, res)=>{
     const{ email, password } = req.body
 
     //Comprobar si el usuario existe 
-    const usuario = await Profesor.findOne({email});
+    const usuario = await Estudiante.findOne({email});
 
     if (!usuario){
         const error = new Error('El Usuario no existe');

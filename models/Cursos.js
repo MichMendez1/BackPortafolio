@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const cursoSchema = mongoose.Schema({
+    id_curso:{
+        type: String,
+        require: true
+    },
     nombre:{
         type: String,
         require: true

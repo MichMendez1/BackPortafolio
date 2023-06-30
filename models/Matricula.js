@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const matriculaSchema = mongoose.Schema({
+    id_matricula:{
+        type: String,
+        require: true
+    },
     id_alumno:{
         type: String,
         require: true

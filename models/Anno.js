@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const annoSchema = mongoose.Schema({
+    id_anno:{
+        type: String,
+        require: true
+    },
     anno:{
         type: Date,
         require: true

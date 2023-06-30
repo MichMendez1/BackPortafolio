@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-const sostenedorSchema = mongoose.Schema({
-    id_sostenedor:{
+const trabajadoresSchema = mongoose.Schema({
+    id_trabajador:{
         type: String,
         require: true
     },
@@ -25,15 +25,23 @@ const sostenedorSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    telofono:{
+    telefono:{
         type: Number,
         require: true
     },
     correo:{
         type: String,
         require: true
+    },
+    id_colegio:{
+        type: String,
+        require: true
+    },
+    id_trabajo:{
+        type: String,
+        require: true
     }
 })
 
-const sostenedor = mongoose.model('sostenedor', sostenedorSchema)
-export default sostenedor
+const trabajadores = mongoose.model('trabajadores', trabajadoresSchema)
+export default trabajadores

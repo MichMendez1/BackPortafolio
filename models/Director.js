@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
+import bcrypt from 'bcrypt';
+import generarId from "../helpers/generarId.js";
 
 const directorSchema = mongoose.Schema({
+    id_director:{
+        type: String,
+        require: true
+    },
     nombre:{
         type: String,
         require: true
@@ -35,5 +41,5 @@ const directorSchema = mongoose.Schema({
     }
 })
 
-const director = mongoose.model('director', sostenedorSchema)
+const director = mongoose.model('director', directorSchema)
 export default director
