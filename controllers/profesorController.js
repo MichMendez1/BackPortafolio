@@ -57,43 +57,46 @@ const perfil = (req, res)=>{
   
 
 const autenticar = async  (req, res)=>{
-    const{ email, password } = req.body
+  const{ email, password } = req.body
 
-    //Comprobar si el usuario existe 
-    const usuario = await Profesor.findOne({email});
-    console.log(usuario);
+  //Comprobar si el usuario existe 
+  const usuario = await Profesor.findOne({email});
+  console.log(usuario);
 
 
-    if (!usuario){
-        const error = new Error('El Usuario no existe');
-        return res.status(404).json({msg: error.message});
-    }
+  if (!usuario){
+      const error = new Error('El Usuario no existe');
+      return res.status(404).json({msg: error.message});
+  }
 
-    // //Comprobar si el usario esta confirmado 
-    // if (!usuario.confirmado){
-    //     const error = new Error('Tú cuenta no ha sido confirmada');
-    //     return res.status(403).json({msg: error.message});
-    // }
+  // //Comprobar si el usario esta confirmado 
+  // if (!usuario.confirmado){
+  //     const error = new Error('Tú cuenta no ha sido confirmada');
+  //     return res.status(403).json({msg: error.message});
+  // }
 
-    //Revisar el password 
-    if(await usuario.comprobarPassword(password)){
-        console.log('Contraseña correcta');
-    
-    //Autenticar
-        res.json({ token: generarJWT(usuario.id) });
-        const usuarioGuardado = {
-          _id: usuario.id,
-          nombres: usuario.nombres,
-          apellidoPaterno: usuario.apellidoPaterno,
-          apellidoMaterno: usuario.apellidoMaterno,
-          email: usuario.email,
-        };
-        return res.status(200).json(usuario)
-    }else {
-        const error = new Error('Contraseña es incorrecta');
-        return res.status(403).json({msg: error.message});
-    }
-   
+  //Revisar el password 
+  if(await usuario.comprobarPassword(password)){
+      console.log('Contraseña correcta');
+      return res.status(200).json(usuario)
+  
+  //Autenticar
+      res.json({ token: generarJWT(usuario.id) });
+      const usuarioGuardado = {
+        _id: usuario.id,
+        nombres: usuario.nombres,
+        apellidoPaterno: usuario.apellidoPaterno,
+        apellidoMaterno: usuario.apellidoMaterno,
+        email: usuario.email,
+      };
+      
+  }
+  else {
+      const error = new Error('Contraseña es incorrecta');
+      return res.status(403).json({msg: error.message});
+  }
+  
+ 
 };
 
 const olvidePassword=(req, res)=>{

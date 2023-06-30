@@ -20,7 +20,10 @@ import anotacionesRoutes from './routes/anotacionesRoutes.js';
 import asistenciaRoutes from './routes/asistenciaRoutes.js';
 import notasRoutes from './routes/notasRoutes.js';
 import Estudiante from "./models/Estudiante.js";
+import Profesor from "./models/Profesor.js";
 import cors from 'cors';
+import router from "./routes/asistenteRoutes.js";
+import directorRoutes from "./routes/directorRoutes.js";
 
 
 const app = express();
@@ -46,9 +49,13 @@ app.use("/api/matriculas", matriculaRoutes);
 app.use("/api/mensualidades", mensualidadRoutes);
 app.use("/api/profesores", profesorRoutes);
 app.use("/api/trabajadores", trabajadoresRoutes);
+app.use("/api/profesores", profesorRoutes);
+app.use("/api/cursos", cursosRoutes);
 app.use("/api/asistencia", asistenciaRoutes);
 app.use("/api/anotaciones", anotacionesRoutes);
+app.use("/api/asistentes", router);
 app.use("/api/notas", notasRoutes);
+app.use("/api/director", directorRoutes);
 
 const PORT = process.env.PORT || 4000
 

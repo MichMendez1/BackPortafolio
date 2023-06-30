@@ -11,7 +11,7 @@ const existeUsuario = await  Director.findOne({email})
 
 if (existeUsuario){
     const error = new Error('Usuario ya registrado');
-    return res.status(400).json({ errors: [{ msg: error.message }] });
+    return res.status(400).json({msg: error.message});
 }
 try {
     //Guardar nuevo Director
@@ -35,7 +35,7 @@ const perfil = (req, res)=>{
   
 //     try {
 //       // Buscar usuario con ese token
-//       const usuarioConfirmar = await Director.findOne({ token });
+//       const usuarioConfirmar = await director.findOne({ token });
   
 //       if (!usuarioConfirmar) {
 //         const error = new Error('Token no válido');
@@ -56,55 +56,59 @@ const perfil = (req, res)=>{
   
 
 const autenticar = async  (req, res)=>{
-    const{ email, password } = req.body
+  const{ email, password } = req.body
 
-    //Comprobar si el usuario existe 
-    const usuario = await Director.findOne({email});
-    console.log(usuario);
+  //Comprobar si el usuario existe 
+  const usuario = await Director.findOne({email});
+  console.log(usuario);
 
 
-    if (!usuario){
-        const error = new Error('El Usuario no existe');
-        return res.status(404).json({msg: error.message});
-    }
+  if (!usuario){
+      const error = new Error('El Usuario no existe');
+      return res.status(404).json({msg: error.message});
+  }
 
-    // //Comprobar si el usario esta confirmado 
-    // if (!usuario.confirmado){
-    //     const error = new Error('Tú cuenta no ha sido confirmada');
-    //     return res.status(403).json({msg: error.message});
-    // }
+  // //Comprobar si el usario esta confirmado 
+  // if (!usuario.confirmado){
+  //     const error = new Error('Tú cuenta no ha sido confirmada');
+  //     return res.status(403).json({msg: error.message});
+  // }
 
-    //Revisar el password 
-    if(await usuario.comprobarPassword(password)){
-        console.log('Contraseña correcta');
-        return res.status(200).json(usuario)
-    
-    //Autenticar
-        res.json({ token: generarJWT(usuario.id) });
-        const usuarioGuardado = {
-          _id: usuario.id,
-          nombres: usuario.nombres,
-          apellidoPaterno: usuario.apellidoPaterno,
-          apellidoMaterno: usuario.apellidoMaterno,
-          email: usuario.email,
-        };
-        
-    }
-    else {
-        const error = new Error('Contraseña es incorrecta');
-        return res.status(403).json({msg: error.message});
-    }
-    
-   
+  //Revisar el password 
+  if(await usuario.comprobarPassword(password)){
+      console.log('Contraseña correcta');
+      return res.status(200).json(usuario)
+  
+  //Autenticar
+      res.json({ token: generarJWT(usuario.id) });
+      const usuarioGuardado = {
+        _id: usuario.id,
+        nombres: usuario.nombres,
+        apellidoPaterno: usuario.apellidoPaterno,
+        apellidoMaterno: usuario.apellidoMaterno,
+        email: usuario.email,
+      };
+      
+  }
+  else {
+      const error = new Error('Contraseña es incorrecta');
+      return res.status(403).json({msg: error.message});
+  }
+  
+ 
 };
 
+const olvidePassword=(req, res)=>{
 
+} ;
 
 const comprobarToken=(req, res)=>{
 
 } ;
 
+const nuevoPassword=(req, res)=>{
 
+} ;
 const obtenerUsuarios = async (req, res) => {
     try {
       const usuarios = await Director.find(); // Obtiene todos los usuarios de la base de datos
@@ -127,7 +131,7 @@ const obtenerUsuarios = async (req, res) => {
       res.json({ mensaje: 'Director eliminado correctamente' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ mensaje: 'Error al eliminar el director' });
+      res.status(500).json({ mensaje: 'Error al eliminar el Director' });
     }
   };
   const actualizarDirector = async (req, res) => {
@@ -142,4 +146,4 @@ const obtenerUsuarios = async (req, res) => {
   };
   
 
-export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarDirector, actualizarDirector};
+export {registrar, perfil, autenticar, olvidePassword, comprobarToken, nuevoPassword, obtenerUsuarios,eliminarDirector, actualizarDirector};

@@ -7,15 +7,23 @@ const asistenteSchema = mongoose.Schema({
     nombre: {
         type: String,
         required: true,
-        trim: true,
     },
-
-    rut: {
+    apellido_paterno: {
         type: String,
         required: true,
         trim: true,
     },
-
+    apellido_materno: {
+        type: String,
+        required: false,
+        trim: true,
+    },
+    rut: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
     password: {
         type: String,
         required: true,
@@ -27,30 +35,21 @@ const asistenteSchema = mongoose.Schema({
         trim: true,
     },
 
-    telfono: {
-        type: String,
-        default: null,
-        trim: true,
-    },
-    emailPropio: {
+   
+    telefono: {
         type: String,
         default: null,
         trim: true,
     },
     tipo: {
         type: String,
-        default: null,
+        required: true,
         trim: true,
     },
     token:{
         type: String,
         default: generarId(),
 
-    },
-
-    confirmado:{
-        type: Boolean,
-        default: false
     }
 });
 
@@ -68,7 +67,7 @@ asistenteSchema.pre('save', async function(next){
 //Confirmar si la clave coincide
 asistenteSchema.methods.comprobarPassword = async function (passwordFormulario){
     return await bcrypt.compare(passwordFormulario, this.password)
-}
+};
 
-const Asistente = mongoose.model("Asistente", asistenteSchema);
+const Asistente = mongoose.model("Asistentes",asistenteSchema);
 export default Asistente;
