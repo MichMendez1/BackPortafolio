@@ -40,7 +40,7 @@ app.use("/api/annos", annoRoutes);
 app.use("/api/sostenedores", sostenedorRoutes);
 app.use("/api/bloques", bloqueRoutes);
 app.use("/api/colegios", colegioRoutes);
-app.use("/api/cursos", cursosRoutes);
+//app.use("/api/cursos", cursosRoutes);
 app.use("/api/directores", directorRoutes);
 app.use("/api/matriculas", matriculaRoutes);
 app.use("/api/mensualidades", mensualidadRoutes);

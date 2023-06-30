@@ -1,19 +1,20 @@
-import Asignatura from "../models/Asignatura.js"
+import Asignatura from "../models/Asignatura.js";
+import generarJWT from "../helpers/generarJWT.js"
 
 const registrar =  async (req, res)=>{
 
 console.log(req.body);
 const {id_asignatura} = req.body;
 
-//Prevenir asignaturas duplicadas
-const existeRamo = await  Asignatura.findOne({id_asignatura})
+//Prevenir usuarios duplicados
+const existeUsuario = await  Asignatura.findOne({id_asignatura})
 
-if (existeRamo){
-    const error = new Error('Asignatura ya registrada');
-    return res.status(400).json({msg: error.message});
+if (existeUsuario){
+    const error = new Error('Usuario ya registrado');
+    return res.status(400).json({ errors: [{ msg: error.message }] });
 }
 try {
-    //Guardar nueva Asignatura
+    //Guardar nuevo Asignatura
     const asignatura = new Asignatura(req.body);
     const asignaturaGuardado = await asignatura.save(); 
     res.json(asignaturaGuardado);
@@ -29,34 +30,116 @@ const perfil = (req, res)=>{
     res.json({ perfil : asignatura });
 };
 
-const confirmar = async (req,res)=>{
-    const { token } = req.params;
+// const confirmar = async (req, res) => {
+//     const { token } = req.params;
+  
+//     try {
+//       // Buscar usuario con ese token
+//       const usuarioConfirmar = await Asignatura.findOne({ token });
+  
+//       if (!usuarioConfirmar) {
+//         const error = new Error('Token no válido');
+//         return res.status(404).json({ msg: error.message });
+//       }
+  
+//       // Actualizar confirmado = true y guardar cambios
+//       usuarioConfirmar.confirmado = true;
+//       usuarioConfirmar.token = null;
+//       await usuarioConfirmar.save();
+  
+//       res.json({ msg: 'Usuario confirmado correctamente.' });
+//     } catch (error) {
+//       console.log(error);
+//       res.status(500).json({ msg: 'Error al confirmar el usuario.' });
+//     }
+//   };
+  
 
-    //Buscar ramo con ese token 
-    const ramoConfirmar = await Asignatura.findOne({token})
-    
-    if (!ramoConfirmar){
-        const error = new Error('Token no válido');
+const autenticar = async  (req, res)=>{
+    const{ id_asignatura, password } = req.body
+
+    //Comprobar si el usuario existe 
+    const usuario = await Asignatura.findOne({id_asignatura});
+    console.log(usuario);
+
+
+    if (!usuario){
+        const error = new Error('El Usuario no existe');
         return res.status(404).json({msg: error.message});
     }
 
-    try {
-        // Despues de buscar se modifica confirmado = true  y almacena 
-        ramoConfirmar.token = null;
-        ramoConfirmar.confirmado = true;
-        await ramoConfirmar.save()
-        res.json({msg: "Asignatura confirmada."})
-        
-    } catch (error) {
-        console.log(error);
+    // //Comprobar si el usario esta confirmado 
+    // if (!usuario.confirmado){
+    //     const error = new Error('Tú cuenta no ha sido confirmada');
+    //     return res.status(403).json({msg: error.message});
+    // }
+
+    //Revisar el password 
+    if(await usuario.comprobarPassword(password)){
+        console.log('Contraseña correcta');
+        return res.status(200).json(usuario)
+    
+    //Autenticar
+        res.json({ token: generarJWT(usuario.id) });
+        const usuarioGuardado = {
+          _id: usuario.id,
+          nombres: usuario.nombres,
+          apellidoPaterno: usuario.apellidoPaterno,
+          apellidoMaterno: usuario.apellidoMaterno,
+          id_asignatura: usuario.id_asignatura,
+        };
         
     }
-
+    else {
+        const error = new Error('Contraseña es incorrecta');
+        return res.status(403).json({msg: error.message});
+    }
+    
+   
 };
+
 
 
 const comprobarToken=(req, res)=>{
 
 } ;
 
-export {registrar, perfil, confirmar , comprobarToken};
+
+const obtenerUsuarios = async (req, res) => {
+    try {
+      const usuarios = await Asignatura.find(); // Obtiene todos los usuarios de la base de datos
+      res.json(usuarios); // Envía la lista de usuarios como respuesta
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+  };
+  const eliminarAsignatura = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const asignatura = await Asignatura.findByIdAndDelete(id);
+  
+      if (!asignatura) {
+        return res.status(404).json({ mensaje: 'Asignatura no encontrado' });
+      }
+  
+      res.json({ mensaje: 'Asignatura eliminado correctamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ mensaje: 'Error al eliminar el asignatura' });
+    }
+  };
+  const actualizarAsignatura = async (req, res) => {
+    const asignaturaId = req.params.id;
+    try {
+      const asignatura = await Asignatura.findByIdAndUpdate(asignaturaId, req.body, { new: true });
+      res.json(asignatura);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ msg: 'Error al actualizar el asignatura' });
+    }
+  };
+  
+
+export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarAsignatura, actualizarAsignatura};

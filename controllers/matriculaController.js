@@ -1,19 +1,20 @@
-import Matricula from "../models/Matricula.js"
+import Matricula from "../models/Matricula.js";
+import generarJWT from "../helpers/generarJWT.js"
 
 const registrar =  async (req, res)=>{
 
 console.log(req.body);
 const {id_matricula} = req.body;
 
-//Prevenir matriculas duplicadas
-const existeRamo = await  Matricula.findOne({id_matricula})
+//Prevenir usuarios duplicados
+const existeUsuario = await  Matricula.findOne({id_matricula})
 
-if (existeRamo){
-    const error = new Error('Matricula ya registrada');
-    return res.status(400).json({msg: error.message});
+if (existeUsuario){
+    const error = new Error('Usuario ya registrado');
+    return res.status(400).json({ errors: [{ msg: error.message }] });
 }
 try {
-    //Guardar nueva Matricula
+    //Guardar nuevo Matricula
     const matricula = new Matricula(req.body);
     const matriculaGuardado = await matricula.save(); 
     res.json(matriculaGuardado);
@@ -29,34 +30,116 @@ const perfil = (req, res)=>{
     res.json({ perfil : matricula });
 };
 
-const confirmar = async (req,res)=>{
-    const { token } = req.params;
+// const confirmar = async (req, res) => {
+//     const { token } = req.params;
+  
+//     try {
+//       // Buscar usuario con ese token
+//       const usuarioConfirmar = await Matricula.findOne({ token });
+  
+//       if (!usuarioConfirmar) {
+//         const error = new Error('Token no válido');
+//         return res.status(404).json({ msg: error.message });
+//       }
+  
+//       // Actualizar confirmado = true y guardar cambios
+//       usuarioConfirmar.confirmado = true;
+//       usuarioConfirmar.token = null;
+//       await usuarioConfirmar.save();
+  
+//       res.json({ msg: 'Usuario confirmado correctamente.' });
+//     } catch (error) {
+//       console.log(error);
+//       res.status(500).json({ msg: 'Error al confirmar el usuario.' });
+//     }
+//   };
+  
 
-    //Buscar matricula con ese token 
-    const matriculaConfirmar = await Matricula.findOne({token})
-    
-    if (!matriculaConfirmar){
-        const error = new Error('Token no válido');
+const autenticar = async  (req, res)=>{
+    const{ id_matricula, password } = req.body
+
+    //Comprobar si el usuario existe 
+    const usuario = await Matricula.findOne({id_matricula});
+    console.log(usuario);
+
+
+    if (!usuario){
+        const error = new Error('El Usuario no existe');
         return res.status(404).json({msg: error.message});
     }
 
-    try {
-        // Despues de buscar se modifica confirmado = true  y almacena 
-        matriculaConfirmar.token = null;
-        matriculaConfirmar.confirmado = true;
-        await matriculaConfirmar.save()
-        res.json({msg: "Matricula confirmada."})
-        
-    } catch (error) {
-        console.log(error);
+    // //Comprobar si el usario esta confirmado 
+    // if (!usuario.confirmado){
+    //     const error = new Error('Tú cuenta no ha sido confirmada');
+    //     return res.status(403).json({msg: error.message});
+    // }
+
+    //Revisar el password 
+    if(await usuario.comprobarPassword(password)){
+        console.log('Contraseña correcta');
+        return res.status(200).json(usuario)
+    
+    //Autenticar
+        res.json({ token: generarJWT(usuario.id) });
+        const usuarioGuardado = {
+          _id: usuario.id,
+          nombres: usuario.nombres,
+          apellidoPaterno: usuario.apellidoPaterno,
+          apellidoMaterno: usuario.apellidoMaterno,
+          id_matricula: usuario.id_matricula,
+        };
         
     }
-
+    else {
+        const error = new Error('Contraseña es incorrecta');
+        return res.status(403).json({msg: error.message});
+    }
+    
+   
 };
+
 
 
 const comprobarToken=(req, res)=>{
 
 } ;
 
-export {registrar, perfil, confirmar , comprobarToken};
+
+const obtenerUsuarios = async (req, res) => {
+    try {
+      const usuarios = await Matricula.find(); // Obtiene todos los usuarios de la base de datos
+      res.json(usuarios); // Envía la lista de usuarios como respuesta
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+  };
+  const eliminarMatricula = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const matricula = await Matricula.findByIdAndDelete(id);
+  
+      if (!matricula) {
+        return res.status(404).json({ mensaje: 'Matricula no encontrado' });
+      }
+  
+      res.json({ mensaje: 'Matricula eliminado correctamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ mensaje: 'Error al eliminar el matricula' });
+    }
+  };
+  const actualizarMatricula = async (req, res) => {
+    const matriculaId = req.params.id;
+    try {
+      const matricula = await Matricula.findByIdAndUpdate(matriculaId, req.body, { new: true });
+      res.json(matricula);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ msg: 'Error al actualizar el matricula' });
+    }
+  };
+  
+
+export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarMatricula, actualizarMatricula};

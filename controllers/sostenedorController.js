@@ -1,19 +1,20 @@
-import Sostenedor from "../models/Sostenedor.js"
+import Sostenedor from "../models/Sostenedor.js";
+import generarJWT from "../helpers/generarJWT.js"
 
 const registrar =  async (req, res)=>{
 
 console.log(req.body);
-const {nombre} = req.body;
+const {email} = req.body;
 
-//Prevenir sostenedores duplicados
-const existeSostenedor = await  Sostenedor.findOne({nombre})
+//Prevenir usuarios duplicados
+const existeUsuario = await  Sostenedor.findOne({email})
 
-if (existeSostenedor){
+if (existeUsuario){
     const error = new Error('Usuario ya registrado');
-    return res.status(400).json({msg: error.message});
+    return res.status(400).json({ errors: [{ msg: error.message }] });
 }
 try {
-    //Guardar nuevo sostenedor
+    //Guardar nuevo Sostenedor
     const sostenedor = new Sostenedor(req.body);
     const sostenedorGuardado = await sostenedor.save(); 
     res.json(sostenedorGuardado);
@@ -29,32 +30,116 @@ const perfil = (req, res)=>{
     res.json({ perfil : sostenedor });
 };
 
-const confirmar = async (req,res)=>{
-    const { token } = req.params;
+// const confirmar = async (req, res) => {
+//     const { token } = req.params;
+  
+//     try {
+//       // Buscar usuario con ese token
+//       const usuarioConfirmar = await Sostenedor.findOne({ token });
+  
+//       if (!usuarioConfirmar) {
+//         const error = new Error('Token no válido');
+//         return res.status(404).json({ msg: error.message });
+//       }
+  
+//       // Actualizar confirmado = true y guardar cambios
+//       usuarioConfirmar.confirmado = true;
+//       usuarioConfirmar.token = null;
+//       await usuarioConfirmar.save();
+  
+//       res.json({ msg: 'Usuario confirmado correctamente.' });
+//     } catch (error) {
+//       console.log(error);
+//       res.status(500).json({ msg: 'Error al confirmar el usuario.' });
+//     }
+//   };
+  
 
-    //Buscar sostenedor con ese token 
-    const sostenedorConfirmar = await Sostenedor.findOne({token})
-    
-    if (!sostenedorConfirmar){
-        const error = new Error('Token no válido');
+const autenticar = async  (req, res)=>{
+    const{ email, password } = req.body
+
+    //Comprobar si el usuario existe 
+    const usuario = await Sostenedor.findOne({email});
+    console.log(usuario);
+
+
+    if (!usuario){
+        const error = new Error('El Usuario no existe');
         return res.status(404).json({msg: error.message});
     }
 
-    try {
-        // Despues de buscar se modifica confirmado = true  y almacena 
-        sostenedorConfirmar.token = null;
-        sostenedorConfirmar.confirmado = true;
-        await sostenedorConfirmar.save()
-        res.json({msg: "Sostenedor confirmado."})
-        
-    } catch (error) {
-        console.log(error);
+    // //Comprobar si el usario esta confirmado 
+    // if (!usuario.confirmado){
+    //     const error = new Error('Tú cuenta no ha sido confirmada');
+    //     return res.status(403).json({msg: error.message});
+    // }
+
+    //Revisar el password 
+    if(await usuario.comprobarPassword(password)){
+        console.log('Contraseña correcta');
+        return res.status(200).json(usuario)
+    
+    //Autenticar
+        res.json({ token: generarJWT(usuario.id) });
+        const usuarioGuardado = {
+          _id: usuario.id,
+          nombres: usuario.nombres,
+          apellidoPaterno: usuario.apellidoPaterno,
+          apellidoMaterno: usuario.apellidoMaterno,
+          email: usuario.email,
+        };
         
     }
+    else {
+        const error = new Error('Contraseña es incorrecta');
+        return res.status(403).json({msg: error.message});
+    }
+    
+   
 };
+
+
 
 const comprobarToken=(req, res)=>{
 
 } ;
 
-export {registrar, perfil, confirmar , comprobarToken};
+
+const obtenerUsuarios = async (req, res) => {
+    try {
+      const usuarios = await Sostenedor.find(); // Obtiene todos los usuarios de la base de datos
+      res.json(usuarios); // Envía la lista de usuarios como respuesta
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+  };
+  const eliminarSostenedor = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const sostenedor = await Sostenedor.findByIdAndDelete(id);
+  
+      if (!sostenedor) {
+        return res.status(404).json({ mensaje: 'Sostenedor no encontrado' });
+      }
+  
+      res.json({ mensaje: 'Sostenedor eliminado correctamente' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ mensaje: 'Error al eliminar el sostenedor' });
+    }
+  };
+  const actualizarSostenedor = async (req, res) => {
+    const sostenedorId = req.params.id;
+    try {
+      const sostenedor = await Sostenedor.findByIdAndUpdate(sostenedorId, req.body, { new: true });
+      res.json(sostenedor);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ msg: 'Error al actualizar el sostenedor' });
+    }
+  };
+  
+
+export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarSostenedor, actualizarSostenedor};

@@ -1,23 +1,23 @@
-import Dia from "../models/Dia.js";
+import Anno from "../models/Anno.js";
 import generarJWT from "../helpers/generarJWT.js"
 
 const registrar =  async (req, res)=>{
 
 console.log(req.body);
-const {email} = req.body;
+const {anno} = req.body;
 
 //Prevenir usuarios duplicados
-const existeUsuario = await  Dia.findOne({email})
+const existeUsuario = await  Anno.findOne({anno})
 
 if (existeUsuario){
     const error = new Error('Usuario ya registrado');
     return res.status(400).json({ errors: [{ msg: error.message }] });
 }
 try {
-    //Guardar nuevo Dia
-    const dia = new Dia(req.body);
-    const diaGuardado = await dia.save(); 
-    res.json(diaGuardado);
+    //Guardar nuevo Anno
+    const anno = new Anno(req.body);
+    const annoGuardado = await anno.save(); 
+    res.json(annoGuardado);
 
 } catch (error) {
     console.log(error);    
@@ -26,8 +26,8 @@ try {
 };
 
 const perfil = (req, res)=>{
-    const { dia } = req;
-    res.json({ perfil : dia });
+    const { anno } = req;
+    res.json({ perfil : anno });
 };
 
 // const confirmar = async (req, res) => {
@@ -35,7 +35,7 @@ const perfil = (req, res)=>{
   
 //     try {
 //       // Buscar usuario con ese token
-//       const usuarioConfirmar = await Dia.findOne({ token });
+//       const usuarioConfirmar = await Anno.findOne({ token });
   
 //       if (!usuarioConfirmar) {
 //         const error = new Error('Token no válido');
@@ -56,10 +56,10 @@ const perfil = (req, res)=>{
   
 
 const autenticar = async  (req, res)=>{
-    const{ email, password } = req.body
+    const{ anno, password } = req.body
 
     //Comprobar si el usuario existe 
-    const usuario = await Dia.findOne({email});
+    const usuario = await Anno.findOne({anno});
     console.log(usuario);
 
 
@@ -86,7 +86,7 @@ const autenticar = async  (req, res)=>{
           nombres: usuario.nombres,
           apellidoPaterno: usuario.apellidoPaterno,
           apellidoMaterno: usuario.apellidoMaterno,
-          email: usuario.email,
+          anno: usuario.anno,
         };
         
     }
@@ -107,39 +107,39 @@ const comprobarToken=(req, res)=>{
 
 const obtenerUsuarios = async (req, res) => {
     try {
-      const usuarios = await Dia.find(); // Obtiene todos los usuarios de la base de datos
+      const usuarios = await Anno.find(); // Obtiene todos los usuarios de la base de datos
       res.json(usuarios); // Envía la lista de usuarios como respuesta
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: 'Error al obtener los usuarios' });
     }
   };
-  const eliminarEstudiante = async (req, res) => {
+  const eliminarAnno = async (req, res) => {
     const { id } = req.params;
   
     try {
-      const dia = await Dia.findByIdAndDelete(id);
+      const anno = await Anno.findByIdAndDelete(id);
   
-      if (!dia) {
-        return res.status(404).json({ mensaje: 'Dia no encontrado' });
+      if (!anno) {
+        return res.status(404).json({ mensaje: 'Anno no encontrado' });
       }
   
-      res.json({ mensaje: 'Dia eliminado correctamente' });
+      res.json({ mensaje: 'Anno eliminado correctamente' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ mensaje: 'Error al eliminar el dia' });
+      res.status(500).json({ mensaje: 'Error al eliminar el anno' });
     }
   };
-  const actualizarEstudiante = async (req, res) => {
-    const diaId = req.params.id;
+  const actualizarAnno = async (req, res) => {
+    const annoId = req.params.id;
     try {
-      const dia = await Dia.findByIdAndUpdate(diaId, req.body, { new: true });
-      res.json(dia);
+      const anno = await Anno.findByIdAndUpdate(annoId, req.body, { new: true });
+      res.json(anno);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ msg: 'Error al actualizar el dia' });
+      res.status(500).json({ msg: 'Error al actualizar el anno' });
     }
   };
   
 
-export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarEstudiante, actualizarEstudiante};
+export {registrar, perfil, autenticar, comprobarToken, obtenerUsuarios,eliminarAnno, actualizarAnno};
