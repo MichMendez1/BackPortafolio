@@ -7,6 +7,13 @@ const notasCrontoller = {
         .then(data => res.json(data))
         .catch(error => console.log(error))
     },
+    obtenerUnaNotas:  async (req, res) => {
+        const id = req.params.id
+        await notasSchema
+        .findById(id)
+        .then(data => res.json(data))
+        .catch(error => console.log(error))
+    },
     crearNotas: async (req, res) => {
         const datos = req.body
         for (const d of datos){

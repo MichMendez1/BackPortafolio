@@ -7,6 +7,13 @@ const anotacionCrontoller = {
         .then(data => res.json(data))
         .catch(error => console.log(error))
     },
+    obtenerUnaAnotaciones:  async (req, res) => {
+        const id = req.params.id
+        await anotacionSchema
+        .findById(id)
+        .then(data => res.json(data))
+        .catch(error => console.log(error))
+    },
     crearAnotacion: async (req, res) => {
         const anotacion = new anotacionSchema(req.body)
         await anotacion
