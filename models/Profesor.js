@@ -4,23 +4,47 @@ import generarId from "../helpers/generarId.js";
 
 
 const profesorSchema = mongoose.Schema({
-    nombre: {
+    profesorID: {
+        type: String,
+        required: false,
+        trim: true,
+    },
+    cursoID: {
+        type: String,
+        required: false,
+        trim: true,
+    },
+    nombres: {
+        type: String,
+        required: true,
+    },
+    apellido_paterno: {
         type: String,
         required: true,
         trim: true,
     },
-
-    rut: {
+    apellido_materno: {
         type: String,
-        required: true,
+        required: false,
         trim: true,
     },
-
-    password: {
-        type: String,
+    fecha_nacimiento: {
+        type: Date,
         required: true,
+        
     },
-
+    nacionalidad: {
+        type: String,
+        required: false,
+        trim: true,
+        
+    },
+    direccion: {
+        type: String,
+        required: false,
+        trim: false,
+        
+    },
     email: {
         type: String,
         required: true,
@@ -28,25 +52,42 @@ const profesorSchema = mongoose.Schema({
         trim: true,
     },
 
-    telfono: {
+    password: {
+        type: String,
+        required: true,
+    },
+    genero: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    rut: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+
+    telefono: {
         type: String,
         default: null,
         trim: true,
     },
+    asignatura:{
+        type: String,
+        
 
+    },
+    tipo: {
+        type: String,
+        required: true,
+        trim: true,
+    },
     token:{
         type: String,
         default: generarId(),
-    },
 
-    confirmado:{
-        type: Boolean,
-        default: false
-    },
-
-    curso:{
-        type:String,
-    },
+    }
 });
 
 //Hashear clave
@@ -65,5 +106,5 @@ profesorSchema.methods.comprobarPassword = async function (passwordFormulario){
     return await bcrypt.compare(passwordFormulario, this.password)
 };
 
-const Profesor = mongoose.model("Profesor",profesorSchema);
+const Profesor = mongoose.model("Profesors",profesorSchema);
 export default Profesor;

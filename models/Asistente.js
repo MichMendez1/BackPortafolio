@@ -3,18 +3,8 @@ import bcrypt from 'bcrypt';
 import generarId from "../helpers/generarId.js";
 
 
-const directorSchema = mongoose.Schema({
-    directorID: {
-        type: String,
-        required: false,
-        trim: true,
-    },
-    cursoID: {
-        type: String,
-        required: false,
-        trim: true,
-    },
-    nombres: {
+const asistenteSchema = mongoose.Schema({
+    nombre: {
         type: String,
         required: true,
     },
@@ -28,23 +18,17 @@ const directorSchema = mongoose.Schema({
         required: false,
         trim: true,
     },
-    fecha_nacimiento: {
-        type: Date,
+    rut: {
+        type: String,
         required: true,
-        
-    },
-    nacionalidad: {
-        type: String,
-        required: false,
+        unique: true,
         trim: true,
-        
     },
-    direccion: {
+    password: {
         type: String,
-        required: false,
-        trim: false,
-        
+        required: true,
     },
+
     email: {
         type: String,
         required: true,
@@ -52,31 +36,11 @@ const directorSchema = mongoose.Schema({
         trim: true,
     },
 
-    password: {
-        type: String,
-        required: true,
-    },
-    genero: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    rut: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
-
+   
     telefono: {
         type: String,
         default: null,
         trim: true,
-    },
-    asignatura:{
-        type: String,
-        
-
     },
     tipo: {
         type: String,
@@ -91,7 +55,7 @@ const directorSchema = mongoose.Schema({
 });
 
 //Hashear clave
-directorSchema.pre('save', async function(next){
+asistenteSchema.pre('save', async function(next){
 
     //Prevenir que lo vuelva a hashear
     if (!this.isModified('password')){
@@ -102,9 +66,9 @@ directorSchema.pre('save', async function(next){
 });
 
 //Confirmar si la clave coincide
-directorSchema.methods.comprobarPassword = async function (passwordFormulario){
+asistenteSchema.methods.comprobarPassword = async function (passwordFormulario){
     return await bcrypt.compare(passwordFormulario, this.password)
 };
 
-const Director = mongoose.model("Directores",directorSchema);
-export default Director;
+const Asistente = mongoose.model("Asistentes",asistenteSchema);
+export default Asistente;
