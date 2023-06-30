@@ -8,4 +8,5 @@ router.post("/crear-notas", notasCrontoller.crearNotas);
 router.post("/actualizar-notas", notasCrontoller.actualizarNotas);
 router.get("/traer-nota", notasCrontoller.obtenerUnaNotas);
 
+
 export default router
