@@ -3,20 +3,20 @@ import Trabajadores from "../models/Trabajadores.js";
 const registrar =  async (req, res)=>{
 
 console.log(req.body);
-const {id_trabajador} = req.body;
+const {id_trabajadores} = req.body;
 
 //Prevenir usuarios duplicados
-const existeUsuario = await  Trabajador.findOne({id_trabajador})
+const existeUsuario = await  Trabajadores.findOne({id_trabajadores})
 
 if (existeUsuario){
     const error = new Error('Usuario ya registrado');
     return res.status(400).json({msg: error.message});
 }
 try {
-    //Guardar nuevo Trabajador
-    const trabajador = new Trabajador(req.body);
-    const trabajadorGuardado = await trabajador.save(); 
-    res.json(trabajadorGuardado);
+    //Guardar nuevo Trabajadores
+    const trabajadores = new Trabajadores(req.body);
+    const trabajadoresGuardado = await trabajadores.save(); 
+    res.json(trabajadoresGuardado);
 
 } catch (error) {
     console.log(error);    
@@ -25,15 +25,15 @@ try {
 };
 
 const perfil = (req, res)=>{
-    const { trabajador } = req;
-    res.json({ perfil : trabajador });
+    const { trabajadores } = req;
+    res.json({ perfil : trabajadores });
 };
 
 const confirmar = async (req,res)=>{
     const { token } = req.params;
 
     //Buscar usuario con ese token 
-    const usuarioConfirmar = await Trabajador.findOne({token})
+    const usuarioConfirmar = await Trabajadores.findOne({token})
     
     if (!usuarioConfirmar){
         const error = new Error('Token no válido');

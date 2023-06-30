@@ -4,7 +4,6 @@ import {
     registrar, 
     perfil, 
     confirmar, 
-    autenticar,
 } from '../controllers/bloqueController.js';
 import cheackAuth from "../middleware/authMiddleware.js";
 
