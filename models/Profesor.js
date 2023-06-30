@@ -4,10 +4,22 @@ import generarId from "../helpers/generarId.js";
 
 
 const profesorSchema = mongoose.Schema({
+    id_profesor:{
+        type: String,
+        require: true
+    },
     nombre: {
         type: String,
         required: true,
         trim: true,
+    },
+    ap_paterno:{
+        type: String,
+        require: true
+    },
+    ap_materno:{
+        type: String,
+        require: true
     },
 
     rut: {

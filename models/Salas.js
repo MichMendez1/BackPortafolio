@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const salaSchema = mongoose.Schema({
+    id_sala:{
+        type: String,
+        require: true
+    },
     id_colegio:{
         type: String,
         require: true

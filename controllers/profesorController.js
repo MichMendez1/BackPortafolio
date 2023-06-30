@@ -1,6 +1,6 @@
 import Profesor from "../models/Profesor.js";
-
 import generarJWT from "../helpers/generarJWT.js"
+
 
 const registrar =  async (req, res)=>{
 

@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const sostenedorSchema = mongoose.Schema({
+    id_sostenedor:{
+        type: String,
+        require: true
+    },
     nombre:{
         type: String,
         require: true
